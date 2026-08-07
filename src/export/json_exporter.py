@@ -32,6 +32,6 @@ def save_record_as_json(record: dict, output_path: str) -> Path:
             indent=4
         )
 
-    print("Saved JSON record: {output_file}")
+    print(f"Saved JSON record: {output_file}")
 
     return output_file

@@ -1,0 +1,17 @@
+{
+    "original_image": "sample_data\\screenshot-1894384.bmp",
+    "png_image": "sample_data\\screenshot-1894384.png",
+    "book_id": "B003",
+    "book_title": "Talking to My Daughter About the Economy",
+    "author": "Yanis Varoufakis",
+    "book_match_method": "known_chapter",
+    "book_match_confidence": 1.0,
+    "chapter": ": - 6 Haunted Machines .",
+    "current_page": 61,
+    "total_pages": 67,
+    "progress_percent": 62,
+    "body_text": "that would have on the course of human history.\n\nCurrently, increasing automation reduces the portion\nof total income that goes to workers, diverting more\nand more money into the pockets of the rich who own\nthe machines. But as we have seen, this ultimately\ndiminishes demand for their products, as the majority\nhave less and less money to spend. But if a portion\nof the profits were to go automatically into the bank\naccounts of the workers as well, then this downward\npressure on demand, sales and prices would be\nalleviated. turning the whole of humanity into the",
+    "battery_text": "M6%",
+    "chapter_text": ": - 6 Haunted Machines .",
+    "reading_text": "61/67 62%"
+}

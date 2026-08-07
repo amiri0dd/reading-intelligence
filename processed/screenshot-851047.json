@@ -1,0 +1,17 @@
+{
+    "original_image": "sample_data\\screenshot-851047.bmp",
+    "png_image": "sample_data\\screenshot-851047.png",
+    "book_id": "B002",
+    "book_title": "The Prophets of Doom",
+    "author": "Neema Parvini",
+    "book_match_method": "known_chapter",
+    "book_match_confidence": 1.0,
+    "chapter": "3: Thomas Carlyle",
+    "current_page": 31,
+    "total_pages": 63,
+    "progress_percent": 21,
+    "body_text": "basic Carlylean thesis—which was inherited almost\nwholesale by many later conservatives who stood\nagainst capitalism—is that the materialist, utilitarian\neconomism that had come to dominate England\nsapped all that is vital about life, leading to both\nhuman catastrophe and spiritual and moral decline.\nHe viewed laissez-faire economics as an abnegation of\nresponsibility: the ship of state must be steered. The\ngospel of Mammon comes to replace God; the doctrine\nof ‘cash-payment’ becomes the ‘universal sole nexus of\nman to man’[39]",
+    "battery_text": "93%",
+    "chapter_text": "3: Thomas Carlyle",
+    "reading_text": "31/63 21%"
+}

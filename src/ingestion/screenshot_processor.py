@@ -1,34 +1,15 @@
 from pathlib import Path
 
+from src.classification.book_matcher import match_book_by_chapter
+from src.classification.footer_parser import parse_footer
 from src.export.json_exporter import save_record_as_json
 from src.ingestion.image_converter import convert_bmp_to_png
 from src.ocr.region_extractor import extract_regions
-from src.classification.footer_parser import parse_footer
-from src.classification.book_matcher import match_book_by_chapter
 
 
 def process_screenshot(image_path: str) -> dict:
     """
     Process one Xteink screenshot from BMP to structured metadata.
-
-    Parameters
-    ----------
-    image_path:
-        Path to the original BMP screenshot.
-
-    Returns
-    -------
-    dict
-        Structured screenshot record containing:
-        - original image path
-        - converted PNG path
-        - book metadata
-        - body OCR text
-        - footer OCR text
-        - chapter
-        - current page
-        - total pages
-        - progress percentage
     """
 
     input_file = Path(image_path)
@@ -39,11 +20,14 @@ def process_screenshot(image_path: str) -> dict:
     # Step 1: Convert BMP to PNG
     png_path = convert_bmp_to_png(str(input_file))
 
-    # Step 2: OCR body and footer separately
+    # Step 2: OCR body and footer regions
     regions = extract_regions(str(png_path))
 
-    # Step 3: Parse footer metadata
-    metadata = parse_footer(regions["footer_text"])
+    # Step 3: Parse chapter and reading metadata
+    metadata = parse_footer(
+        regions["chapter_text"],
+        regions["reading_text"],
+    )
 
     # Step 4: Match chapter to a known book
     book_match = match_book_by_chapter(
@@ -67,7 +51,9 @@ def process_screenshot(image_path: str) -> dict:
         "progress_percent": metadata["progress_percent"],
 
         "body_text": regions["body_text"],
-        "footer_text": regions["footer_text"],
+        "battery_text": regions["battery_text"],
+        "chapter_text": regions["chapter_text"],
+        "reading_text": regions["reading_text"],
     }
 
     return record

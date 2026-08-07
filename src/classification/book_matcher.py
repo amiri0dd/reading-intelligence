@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -7,15 +8,38 @@ from src.classification.book_catalogue import get_book_by_id
 
 def normalize_text(text: str | None) -> str:
     """
-    Normalize text for reliable comparisons.
+    Normalize chapter text for robust matching.
     """
 
     if not text:
         return ""
 
-    return " ".join(
-        text.casefold().strip().split()
+    text = text.casefold().strip()
+
+    # Remove stray punctuation/symbols at the beginning.
+    text = re.sub(r"^[^\w]+", "", text)
+
+    # Remove common chapter numbering.
+    text = re.sub(
+        r"^\s*\d+\s*[\.\:\-\)]?\s*",
+        "",
+        text,
     )
+
+    # Remove stray punctuation/symbols at the end.
+    text = re.sub(r"[^\w]+$", "", text)
+
+    # Replace remaining punctuation with spaces.
+    text = re.sub(
+        r"[^\w\s]",
+        " ",
+        text,
+    )
+
+    # Collapse repeated whitespace.
+    text = " ".join(text.split())
+
+    return text
 
 
 def load_chapter_aliases(
@@ -76,8 +100,6 @@ def match_book_by_chapter(
 ) -> dict:
     """
     Match an extracted chapter title to a known book.
-
-    Returns a structured match result.
     """
 
     normalized_chapter = normalize_text(chapter_title)
@@ -132,28 +154,11 @@ def match_book_by_chapter(
 
 
 if __name__ == "__main__":
-    sample_chapter = (
-        "1. The Paleontology of Iranian Nationalism"
-    )
-
-    print("TEST CHAPTER")
-    print(repr(sample_chapter))
-    print("Normalized:", repr(normalize_text(sample_chapter)))
-
-    print("\nALIASES")
-    print("=" * 60)
-
-    aliases = load_chapter_aliases()
-
-    for _, row in aliases.iterrows():
-        print("Original:", repr(row["chapter_title"]))
-        print("Normalized:", repr(row["normalized_chapter"]))
-        print("Book ID:", repr(row["book_id"]))
-        print()
+    sample_chapter = "9: Julius Evola"
 
     result = match_book_by_chapter(sample_chapter)
 
-    print("\nBOOK MATCH")
+    print("BOOK MATCH")
     print("=" * 60)
 
     for key, value in result.items():

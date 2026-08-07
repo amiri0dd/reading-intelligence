@@ -1,0 +1,17 @@
+{
+    "original_image": "sample_data\\screenshot-227315.bmp",
+    "png_image": "sample_data\\screenshot-227315.png",
+    "book_id": "B002",
+    "book_title": "The Prophets of Doom",
+    "author": "Neema Parvini",
+    "book_match_method": "known_chapter",
+    "book_match_confidence": 1.0,
+    "chapter": "- 9: Julius Evola",
+    "current_page": 8,
+    "total_pages": 86,
+    "progress_percent": 60,
+    "body_text": "trial for allegedly attempting to resurrect fascism in\nItaly. Never officially a member of the Fascist Party,\nhe defended himself in court and was acquitted of all\ncharges. His statement in self-defence has become\nsomewhat legendary: ‘My ideas are only those that,\nbefore the French Revolution, every well-born person\nconsidered sane and normal.’'[18]\n\nGiven this history, it is perhaps unsurprising that the\nbulk of the secondary literature on Evola falls into\nthree broad categories: the first is among largely liberal\nscholars researching fascism and the extent to which",
+    "battery_text": "84%",
+    "chapter_text": "- 9: Julius Evola",
+    "reading_text": "8/86 60%"
+}

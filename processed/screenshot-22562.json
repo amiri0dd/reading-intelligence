@@ -1,0 +1,17 @@
+{
+    "original_image": "sample_data\\screenshot-22562.bmp",
+    "png_image": "sample_data\\screenshot-22562.png",
+    "book_id": "B002",
+    "book_title": "The Prophets of Doom",
+    "author": "Neema Parvini",
+    "book_match_method": "known_chapter",
+    "book_match_confidence": 1.0,
+    "chapter": "13: Conclusion",
+    "current_page": null,
+    "total_pages": null,
+    "progress_percent": 88,
+    "body_text": "independently by different observers. I will list the ten\nmost prominent of these:\n\n+ The Spark, the animating spirit of the early warrior\ncaste, is distinct from the religion that comes to\npredominate and maintain the later multiethnic\nempire, which I will call The Imperial Altar.\n\n+ Civilisational successes—such as conquest, wealth,\nand education—generate their own loss conditions.",
+    "battery_text": "738%",
+    "chapter_text": "13: Conclusion",
+    "reading_text": "2135 88%"
+}

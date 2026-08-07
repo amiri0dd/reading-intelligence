@@ -6,20 +6,12 @@ from PIL import Image
 
 def extract_regions(image_path: str, footer_height: int = 40) -> dict:
     """
-    Extract the main reading passage and footer metadata separately.
+    Extract the reading body and footer metadata from an Xteink screenshot.
 
-    Parameters
-    ----------
-    image_path:
-        Path to the screenshot.
-
-    footer_height:
-        Height in pixels reserved for the footer area.
-
-    Returns
-    -------
-    dict
-        Dictionary containing OCR text from the body and footer.
+    The footer is split into:
+    - left: battery
+    - center: chapter title
+    - right: page/location + reading progress
     """
 
     image_file = Path(image_path)
@@ -30,28 +22,71 @@ def extract_regions(image_path: str, footer_height: int = 40) -> dict:
     with Image.open(image_file) as image:
         width, height = image.size
 
-        body = image.crop((0, 0, width, height - footer_height))
-        footer = image.crop((0, height - footer_height, width, height))
+        footer_top = height - footer_height
 
-        body_text = pytesseract.image_to_string(body).strip()
-        footer_text = pytesseract.image_to_string(
-            footer,
-            config="--psm 6"
+        # Main reading area
+        body = image.crop(
+            (0, 0, width, footer_top)
+        )
+
+        # Footer regions
+        footer_left = image.crop(
+            (0, footer_top, int(width * 0.13), height)
+        )
+
+        footer_center = image.crop(
+            (int(width * 0.10), footer_top, int(width * 0.84), height)
+        )
+
+        footer_right = image.crop(
+            (int(width * 0.80), footer_top, width, height)
+        )
+
+        # OCR each region separately
+        body_text = pytesseract.image_to_string(
+            body
+        ).strip()
+
+        battery_text = pytesseract.image_to_string(
+            footer_left,
+            config="--psm 7"
+        ).strip()
+
+        chapter_text = pytesseract.image_to_string(
+            footer_center,
+            config="--psm 7"
+        ).strip()
+
+        reading_text = pytesseract.image_to_string(
+            footer_right,
+            config="--psm 7"
         ).strip()
 
     return {
         "body_text": body_text,
-        "footer_text": footer_text,
+        "battery_text": battery_text,
+        "chapter_text": chapter_text,
+        "reading_text": reading_text,
     }
 
 
 if __name__ == "__main__":
-    results = extract_regions("sample_data/sample_page.png")
+    results = extract_regions(
+        "sample_data/sample_page.png"
+    )
 
     print("BODY")
     print("=" * 60)
     print(results["body_text"])
 
-    print("\nFOOTER")
+    print("\nBATTERY")
     print("=" * 60)
-    print(results["footer_text"])
+    print(results["battery_text"])
+
+    print("\nCHAPTER")
+    print("=" * 60)
+    print(results["chapter_text"])
+
+    print("\nREADING METADATA")
+    print("=" * 60)
+    print(results["reading_text"])

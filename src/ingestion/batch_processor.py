@@ -56,6 +56,16 @@ def process_folder(input_folder: str, output_folder: str = "processed") -> list[
             records.append(record)
 
             print("Status: Success")
+            print(f"Book ID: {record['book_id']}")
+            print(f"Book Title: {record['book_title']}")
+            print(f"Chapter: {record['chapter']}")
+            print(f"Match Method: {record['book_match_method']}")
+            print(f"Match Confidence: {record['book_match_confidence']}")
+
+
+
+
+
 
         except Exception as error:
             print(f"Status: Failed")
