@@ -1,10 +1,15 @@
 {
     "original_image": "sample_data\\sample_page.bmp",
     "png_image": "sample_data\\sample_page.png",
-    "body_text": "of the Russo-Iranian wars are rare due to the official\nchroniclers’ wariness not to offend their courtly\npatrons. Nevertheless, two extant testimonies relay\nthe scope of the Qajar court’s incomprehension after\nthe defeats. First we have Crown Prince and military\ncommander Abbas Mirza Qajar’s (1789-1833) naive\nand frankly bitter question to a European dignitary as\nearly as 1805: “What is the power that gives [Europe]\nso great a superiority over us? What is the cause of\nyour progress and of our constant weakness? You\nknow the art of governing, the art of conquering,",
-    "footer_text": "65% 1. The Paleontology of Iranian Nationalism 31/118 6%",
+    "book_id": "B001",
+    "book_title": "The Emergence of Iranian Nationalism: Race and the Politics of Dislocation",
+    "author": "Zia Ebrahimi",
+    "book_match_method": "known_chapter",
+    "book_match_confidence": 1.0,
     "chapter": "1. The Paleontology of Iranian Nationalism",
     "current_page": 31,
     "total_pages": 118,
-    "progress_percent": 6
+    "progress_percent": 6,
+    "body_text": "of the Russo-Iranian wars are rare due to the official\nchroniclers’ wariness not to offend their courtly\npatrons. Nevertheless, two extant testimonies relay\nthe scope of the Qajar court’s incomprehension after\nthe defeats. First we have Crown Prince and military\ncommander Abbas Mirza Qajar’s (1789-1833) naive\nand frankly bitter question to a European dignitary as\nearly as 1805: “What is the power that gives [Europe]\nso great a superiority over us? What is the cause of\nyour progress and of our constant weakness? You\nknow the art of governing, the art of conquering,",
+    "footer_text": "65% 1. The Paleontology of Iranian Nationalism 31/118 6%"
 }

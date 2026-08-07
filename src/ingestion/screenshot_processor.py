@@ -1,8 +1,10 @@
 from pathlib import Path
+
 from src.export.json_exporter import save_record_as_json
 from src.ingestion.image_converter import convert_bmp_to_png
 from src.ocr.region_extractor import extract_regions
 from src.classification.footer_parser import parse_footer
+from src.classification.book_matcher import match_book_by_chapter
 
 
 def process_screenshot(image_path: str) -> dict:
@@ -20,6 +22,7 @@ def process_screenshot(image_path: str) -> dict:
         Structured screenshot record containing:
         - original image path
         - converted PNG path
+        - book metadata
         - body OCR text
         - footer OCR text
         - chapter
@@ -42,16 +45,29 @@ def process_screenshot(image_path: str) -> dict:
     # Step 3: Parse footer metadata
     metadata = parse_footer(regions["footer_text"])
 
-    # Step 4: Combine everything into one record
+    # Step 4: Match chapter to a known book
+    book_match = match_book_by_chapter(
+        metadata["chapter"]
+    )
+
+    # Step 5: Combine everything into one record
     record = {
         "original_image": str(input_file),
         "png_image": str(png_path),
-        "body_text": regions["body_text"],
-        "footer_text": regions["footer_text"],
+
+        "book_id": book_match["book_id"],
+        "book_title": book_match["title"],
+        "author": book_match["author"],
+        "book_match_method": book_match["match_method"],
+        "book_match_confidence": book_match["confidence"],
+
         "chapter": metadata["chapter"],
         "current_page": metadata["current_page"],
         "total_pages": metadata["total_pages"],
         "progress_percent": metadata["progress_percent"],
+
+        "body_text": regions["body_text"],
+        "footer_text": regions["footer_text"],
     }
 
     return record
@@ -67,6 +83,6 @@ if __name__ == "__main__":
         print(f"{key}: {value}")
 
     save_record_as_json(
-    result,
-    "processed/sample_page.json"
-)
+        result,
+        "processed/sample_page.json"
+    )
