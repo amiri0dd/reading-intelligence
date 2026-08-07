@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from src.export.json_exporter import save_record_as_json
 from src.ingestion.image_converter import convert_bmp_to_png
 from src.ocr.region_extractor import extract_regions
 from src.classification.footer_parser import parse_footer
@@ -65,3 +65,8 @@ if __name__ == "__main__":
 
     for key, value in result.items():
         print(f"{key}: {value}")
+
+    save_record_as_json(
+    result,
+    "processed/sample_page.json"
+)
