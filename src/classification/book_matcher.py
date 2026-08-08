@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.classification.book_catalogue import get_book_by_id
+from difflib import SequenceMatcher
 
 
 def normalize_text(text: str | None) -> str:
@@ -16,18 +17,33 @@ def normalize_text(text: str | None) -> str:
 
     text = text.casefold().strip()
 
-    # Remove stray punctuation/symbols at the beginning.
-    text = re.sub(r"^[^\w]+", "", text)
-
-    # Remove common chapter numbering.
+    # Remove obvious OCR junk at the beginning.
     text = re.sub(
-        r"^\s*\d+\s*[\.\:\-\)]?\s*",
+        r"^(ot|os)\s+",
+        "",
+        text,
+    )
+
+    # Remove stray punctuation/symbols at the beginning.
+    text = re.sub(
+        r"^[^\w]+",
+        "",
+        text,
+    )
+
+    # Remove one or more leading chapter numbers.
+    text = re.sub(
+        r"^(?:\d+\s*[\.\:\-\)]?\s*)+",
         "",
         text,
     )
 
     # Remove stray punctuation/symbols at the end.
-    text = re.sub(r"[^\w]+$", "", text)
+    text = re.sub(
+        r"[^\w]+$",
+        "",
+        text,
+    )
 
     # Replace remaining punctuation with spaces.
     text = re.sub(
@@ -100,6 +116,11 @@ def match_book_by_chapter(
 ) -> dict:
     """
     Match an extracted chapter title to a known book.
+
+    Matching order:
+    1. Exact normalized chapter match
+    2. Fuzzy chapter match
+    3. Return unmatched
     """
 
     normalized_chapter = normalize_text(chapter_title)
@@ -116,40 +137,85 @@ def match_book_by_chapter(
 
     aliases = load_chapter_aliases(aliases_path)
 
+    # ---------------------------------------------------------
+    # Step 1: Exact normalized match
+    # ---------------------------------------------------------
     match = aliases[
         aliases["normalized_chapter"]
         == normalized_chapter
     ]
 
-    if match.empty:
-        return {
-            "matched": False,
-            "book_id": None,
-            "title": None,
-            "author": None,
-            "match_method": None,
-            "confidence": 0.0,
-        }
+    if not match.empty:
+        book_id = match.iloc[0]["book_id"]
 
-    book_id = match.iloc[0]["book_id"]
-
-    book = get_book_by_id(
-        book_id,
-        catalogue_path=catalogue_path,
-    )
-
-    if book is None:
-        raise ValueError(
-            f"Chapter alias points to unknown book_id: {book_id}"
+        book = get_book_by_id(
+            book_id,
+            catalogue_path=catalogue_path,
         )
 
+        if book is None:
+            raise ValueError(
+                f"Chapter alias points to unknown book_id: {book_id}"
+            )
+
+        return {
+            "matched": True,
+            "book_id": book["book_id"],
+            "title": book["title"],
+            "author": book["author"],
+            "match_method": "known_chapter",
+            "confidence": 1.0,
+        }
+
+    # ---------------------------------------------------------
+    # Step 2: Fuzzy match
+    # ---------------------------------------------------------
+    best_match = None
+    best_score = 0.0
+
+    for _, row in aliases.iterrows():
+        score = SequenceMatcher(
+            None,
+            normalized_chapter,
+            row["normalized_chapter"],
+        ).ratio()
+
+        if score > best_score:
+            best_score = score
+            best_match = row
+
+    if best_match is not None and best_score >= 0.85:
+        book_id = best_match["book_id"]
+
+        book = get_book_by_id(
+            book_id,
+            catalogue_path=catalogue_path,
+        )
+
+        if book is None:
+            raise ValueError(
+                f"Chapter alias points to unknown book_id: {book_id}"
+            )
+
+        return {
+            "matched": True,
+            "book_id": book["book_id"],
+            "title": book["title"],
+            "author": book["author"],
+            "match_method": "fuzzy_chapter",
+            "confidence": round(best_score, 3),
+        }
+
+    # ---------------------------------------------------------
+    # Step 3: No reliable match
+    # ---------------------------------------------------------
     return {
-        "matched": True,
-        "book_id": book["book_id"],
-        "title": book["title"],
-        "author": book["author"],
-        "match_method": "known_chapter",
-        "confidence": 1.0,
+        "matched": False,
+        "book_id": None,
+        "title": None,
+        "author": None,
+        "match_method": None,
+        "confidence": round(best_score, 3),
     }
 
 

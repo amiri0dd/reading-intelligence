@@ -1,0 +1,17 @@
+{
+    "original_image": "screenshots\\screenshot-497711.bmp",
+    "png_image": "screenshots\\screenshot-497711.png",
+    "book_id": "B002",
+    "book_title": "The Prophets of Doom",
+    "author": "Neema Parvini",
+    "book_match_method": "known_chapter",
+    "book_match_confidence": 1.0,
+    "chapter": "11: Joseph Tainter",
+    "current_page": 52,
+    "total_pages": 86,
+    "progress_percent": 78,
+    "body_text": "what Tainter means by ‘increasing complexity’—this is\nTainter’s entire thesis:\n\nComplex societies are problem-solving\norganizations, in which more parts,\ndifferent kinds of parts, more social\ndifferentiation, more inequality, and\nmore kinds of centralization and control\nemerge as circumstances require. Growth\nof complexity has involved a change from\nsmall, internally homogeneous, minimally",
+    "battery_text": "79%",
+    "chapter_text": "11: Joseph Tainter",
+    "reading_text": "52/86 78%"
+}
