@@ -1,0 +1,26 @@
+[
+    {
+        "source_image": "screenshot-1837693.bmp",
+        "source_book_id": "B001",
+        "source_book": "The Emergence of Iranian Nationalism: Race and the Politics of Dislocation",
+        "source_chapter": "6, Aryanism and Dislocation",
+        "target_image": "screenshot-509829.bmp",
+        "target_book_id": "B002",
+        "target_book": "The Prophets of Doom",
+        "target_chapter": "13: Conclusion :",
+        "similarity": 0.562,
+        "relationship_type": "semantic_similarity"
+    },
+    {
+        "source_image": "screenshot-509829.bmp",
+        "source_book_id": "B002",
+        "source_book": "The Prophets of Doom",
+        "source_chapter": "13: Conclusion :",
+        "target_image": "screenshot-1837693.bmp",
+        "target_book_id": "B001",
+        "target_book": "The Emergence of Iranian Nationalism: Race and the Politics of Dislocation",
+        "target_chapter": "6, Aryanism and Dislocation",
+        "similarity": 0.562,
+        "relationship_type": "semantic_similarity"
+    }
+]

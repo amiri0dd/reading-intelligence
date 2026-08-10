@@ -63,17 +63,37 @@ def export_passage_to_obsidian(
     if current_page is not None and total_pages is not None:
         location = f"{current_page}/{total_pages}"
 
-    note_title = sanitize_filename(
-        f"{book_title} - {chapter} - {source_image.stem}"
-    )
-
-    note_path = passages_folder / f"{note_title}.md"
-
     progress_display = (
         f"{progress}%"
         if progress is not None
         else ""
     )
+
+    # Use a Windows-safe filename for the book note link.
+    book_note_name = sanitize_filename(
+        book_title
+    )
+
+    # Build theme links.
+    theme_links = []
+
+    for theme in record.get("themes", []):
+        theme_links.append(
+            f"- [[{theme['concept_name']}]]"
+        )
+
+    themes_markdown = (
+        "\n".join(theme_links)
+        if theme_links
+        else "_No concepts detected yet._"
+    )
+
+    # Create a unique passage note filename.
+    note_title = sanitize_filename(
+        f"{book_title} - {chapter} - {source_image.stem}"
+    )
+
+    note_path = passages_folder / f"{note_title}.md"
 
     markdown = f"""---
 type: passage
@@ -91,7 +111,7 @@ match_confidence: {record['book_match_confidence']}
 
 ## Source
 
-**Book:** [[{book_title}]]
+**Book:** [[{book_note_name}|{book_title}]]
 
 **Author:** {author}
 
@@ -117,7 +137,7 @@ _To be generated later._
 
 ## Themes
 
-_To be added._
+{themes_markdown}
 
 ## Connections
 

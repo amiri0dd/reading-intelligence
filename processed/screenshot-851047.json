@@ -10,6 +10,24 @@
     "current_page": 31,
     "total_pages": 63,
     "progress_percent": 21,
+    "themes": [
+        {
+            "concept_id": "C009",
+            "concept_name": "Capitalism",
+            "parent_concept": "Political Economy",
+            "matched_keywords": [
+                "capitalism"
+            ]
+        },
+        {
+            "concept_id": "C017",
+            "concept_name": "Social Decline",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "decline"
+            ]
+        }
+    ],
     "body_text": "basic Carlylean thesis—which was inherited almost\nwholesale by many later conservatives who stood\nagainst capitalism—is that the materialist, utilitarian\neconomism that had come to dominate England\nsapped all that is vital about life, leading to both\nhuman catastrophe and spiritual and moral decline.\nHe viewed laissez-faire economics as an abnegation of\nresponsibility: the ship of state must be steered. The\ngospel of Mammon comes to replace God; the doctrine\nof ‘cash-payment’ becomes the ‘universal sole nexus of\nman to man’[39]",
     "battery_text": "93%",
     "chapter_text": "3: Thomas Carlyle",

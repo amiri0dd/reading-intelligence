@@ -10,6 +10,16 @@
     "current_page": 52,
     "total_pages": 86,
     "progress_percent": 78,
+    "themes": [
+        {
+            "concept_id": "C014",
+            "concept_name": "Inequality",
+            "parent_concept": "Political Economy",
+            "matched_keywords": [
+                "inequality"
+            ]
+        }
+    ],
     "body_text": "what Tainter means by ‘increasing complexity’—this is\nTainter’s entire thesis:\n\nComplex societies are problem-solving\norganizations, in which more parts,\ndifferent kinds of parts, more social\ndifferentiation, more inequality, and\nmore kinds of centralization and control\nemerge as circumstances require. Growth\nof complexity has involved a change from\nsmall, internally homogeneous, minimally",
     "battery_text": "79%",
     "chapter_text": "11: Joseph Tainter",

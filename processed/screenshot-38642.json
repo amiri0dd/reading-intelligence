@@ -10,6 +10,32 @@
     "current_page": null,
     "total_pages": null,
     "progress_percent": null,
+    "themes": [
+        {
+            "concept_id": "C002",
+            "concept_name": "Nationalism",
+            "parent_concept": "Political Identity",
+            "matched_keywords": [
+                "nationalism"
+            ]
+        },
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "european"
+            ]
+        },
+        {
+            "concept_id": "C020",
+            "concept_name": "Ideology",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "ideological"
+            ]
+        }
+    ],
     "body_text": "Anthony Parsons that, as “Aryans,” Iranians were in\nfact members of the European family and that it was a\nmere “accident of geography” that Iran found itself in\nthe Middle East rather than among its fellow European\nnations.4\n\nThe three ideological aspects discussed over\nthe previous chapters—pre-Islamic archaism,\nArab-hatred, and hybridized-despotic approach to\nEuropeanization—form the doctrinal backbone of\ndislocative nationalism. In the next decades and\narcuably down to this dav. little would be added.",
     "battery_text": "53%",
     "chapter_text": ". 6. Aryanism and Dislocation",

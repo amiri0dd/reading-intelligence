@@ -14,7 +14,7 @@ match_confidence: 1.0
 
 ## Source
 
-**Book:** [[The Prophets of Doom]]
+**Book:** [[The Prophets of Doom|The Prophets of Doom]]
 
 **Author:** Neema Parvini
 
@@ -51,7 +51,7 @@ _To be generated later._
 
 ## Themes
 
-_To be added._
+_No concepts detected yet._
 
 ## Connections
 

@@ -10,6 +10,16 @@
     "current_page": 9,
     "total_pages": 33,
     "progress_percent": 54,
+    "themes": [
+        {
+            "concept_id": "C020",
+            "concept_name": "Ideology",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "ideology"
+            ]
+        }
+    ],
     "body_text": "them like the subjects of some medieval polity to be\nshaped at will, yet intruding in their private lives\nthrough means that only a modern state could yield.\nThe militaristic assault on popular religion, sartorial\ntraditions, linguistic minorities, and nomads could\nonly alienate large segments of society and undermine\nthe legitimacy of that very state and its ideology. This\nlack of legitimacy in turn partly explains why the\nabdication of Reza Shah was welcomed with a sigh\nof relief rather than popular protest. Such rigid and\ndogmatic ideology could not attract and retain the",
     "battery_text": "51%",
     "chapter_text": "Conclusion: The Failure of Dislocative Nationalism",

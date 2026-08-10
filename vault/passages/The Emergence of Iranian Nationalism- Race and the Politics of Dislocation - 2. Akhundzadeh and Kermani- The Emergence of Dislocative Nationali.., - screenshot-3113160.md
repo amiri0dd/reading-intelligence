@@ -14,7 +14,7 @@ match_confidence: 0.984
 
 ## Source
 
-**Book:** [[The Emergence of Iranian Nationalism: Race and the Politics of Dislocation]]
+**Book:** [[The Emergence of Iranian Nationalism- Race and the Politics of Dislocation|The Emergence of Iranian Nationalism: Race and the Politics of Dislocation]]
 
 **Author:** Zia Ebrahimi
 
@@ -51,7 +51,11 @@ _To be generated later._
 
 ## Themes
 
-_To be added._
+- [[Nationalism]]
+- [[Race]]
+- [[Modernization]]
+- [[Europe]]
+- [[Ideology]]
 
 ## Connections
 

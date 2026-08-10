@@ -10,6 +10,25 @@
     "current_page": null,
     "total_pages": null,
     "progress_percent": 88,
+    "themes": [
+        {
+            "concept_id": "C007",
+            "concept_name": "Imperialism",
+            "parent_concept": "International Political Economy",
+            "matched_keywords": [
+                "imperial",
+                "empire"
+            ]
+        },
+        {
+            "concept_id": "C018",
+            "concept_name": "Civilization",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "civilisational"
+            ]
+        }
+    ],
     "body_text": "independently by different observers. I will list the ten\nmost prominent of these:\n\n+ The Spark, the animating spirit of the early warrior\ncaste, is distinct from the religion that comes to\npredominate and maintain the later multiethnic\nempire, which I will call The Imperial Altar.\n\n+ Civilisational successes—such as conquest, wealth,\nand education—generate their own loss conditions.",
     "battery_text": "738%",
     "chapter_text": "13: Conclusion",

@@ -10,6 +10,24 @@
     "current_page": null,
     "total_pages": null,
     "progress_percent": 53,
+    "themes": [
+        {
+            "concept_id": "C007",
+            "concept_name": "Imperialism",
+            "parent_concept": "International Political Economy",
+            "matched_keywords": [
+                "imperialism"
+            ]
+        },
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "european"
+            ]
+        }
+    ],
     "body_text": "predecessors’ reverence and sometimes somewhat\nexcessive in its anti-imperialism and third-worldism.\nThis was the time of Jalal Al-e Ahmad’s virulent\ncriticism of gharbzadegi (“Westoxication,” alternatively\ntranslated as “Weststruckness” or “Occidentosis”)\nin 1962.47 Gharbzadegi refers to the uncritical and\npathological infatuation of secular nationalists\nwith things European; this infatuation had, in Ale-e\nAhmad’s view and that of other intellectuals, gradually\nreplaced “backwardness” (as Iran’s main sociohistorical\nproblem) with alienation.48 According to Boroujerdi,",
     "battery_text": "51%",
     "chapter_text": "8. Triumph",

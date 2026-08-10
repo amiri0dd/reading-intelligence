@@ -10,6 +10,24 @@
     "current_page": 118,
     "total_pages": 154,
     "progress_percent": 48,
+    "themes": [
+        {
+            "concept_id": "C002",
+            "concept_name": "Nationalism",
+            "parent_concept": "Political Identity",
+            "matched_keywords": [
+                "nation"
+            ]
+        },
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "aryan"
+            ]
+        }
+    ],
     "body_text": "striking parallels.101 In Afshin Marashi’s words, the\nstate’s objective was “to construct a counterdiscourse\nto prevailing forms of the sacred.”102\n\nThe most illustrative case is the shrine erected to\nFerdowsi’s memory in the early 1930s, a modern\nstructure inspired by pre-Islamic forms.103 It was\nbuilt as a symbol “for a modern Aryan nation on a\nmarch to a bright future” in a fascinating case of\n“propaganda architecture.”104 Although the anjoman’s\nproject was at first a private matter, and funds were\nraised privately. the early Pahlavi state soon threw",
     "battery_text": "51%",
     "chapter_text": "/ 7 7. The Road to Officialdom",

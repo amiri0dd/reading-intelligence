@@ -10,6 +10,24 @@
     "current_page": 53,
     "total_pages": 97,
     "progress_percent": 40,
+    "themes": [
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "europe"
+            ]
+        },
+        {
+            "concept_id": "C018",
+            "concept_name": "Civilization",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "civilisation"
+            ]
+        }
+    ],
     "body_text": "As we discussed in Chapter 4 in the analysis of\nGobineau, there is strong evidence that rather than\n‘Christianising’ Europe, what actually took place is that\nChristianity was ‘Germanised’, that is, stripped of its\noriginal dualistic spirit and replaced with one ‘truer’\nto the Faustian spirit that animates Europe. This was\nSpengler’s view. For a period, roughly from the Fall\nof Rome to the tenth century, Magian elements sat\nuneasily side-by-side with nascent Faustian elements\nin the ashes of the old Apollonian civilisation. The\nCrusades represent the final expulsion of Magian",
     "battery_text": "TH 8a%",
     "chapter_text": "6: Oswald Spengler",

@@ -10,6 +10,32 @@
     "current_page": 96,
     "total_pages": 105,
     "progress_percent": 42,
+    "themes": [
+        {
+            "concept_id": "C002",
+            "concept_name": "Nationalism",
+            "parent_concept": "Political Identity",
+            "matched_keywords": [
+                "nationalism"
+            ]
+        },
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "aryan"
+            ]
+        },
+        {
+            "concept_id": "C017",
+            "concept_name": "Social Decline",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "decay"
+            ]
+        }
+    ],
     "body_text": "racialism. It became the core element of an intellectual\nedifice that attempted to explain Iran’s decay in the\nsimplest terms possible: ancient Iran was magnificent\nbecause purely Aryan, then Iran’s glory waned because\nthe Arabs and later Mongols came, and in the future\nIran has to blindly Westernize itself to become Aryan\nagain. This discursive program, this vision of a future\nwith an eye on an imagined past, brought about what\nI consider to be the feature that sets the nationalism\nof Akhundzadeh and Kermani apart from other\nideologies: dislocation. Indeed, I have been referring",
     "battery_text": "53%",
     "chapter_text": "6, Aryanism and Dislocation",

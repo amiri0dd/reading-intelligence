@@ -10,6 +10,16 @@
     "current_page": 13,
     "total_pages": 63,
     "progress_percent": 26,
+    "themes": [
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "racial"
+            ]
+        }
+    ],
     "body_text": "of Gobineau’s statements can be alarming to modern\nsensibilities. As I will show, the extent to which these\ncategories are strictly biological is doubtful because\nthey seem to refer to three kinds of human spirit.\nRather than ‘white’, we might say ‘chivalric’, rather\nthan ‘black’ we might say ‘primal’, and rather than\n‘yellow’ we might say ‘practical’. In fact, such is the\ncognitive dissonance caused by racial categories in\nthe present day, for the sake of clarity I will substitute\nthese terms in the ensuing discussion. It is clear that\nthey are not scientific categories but rather ‘poetic’",
     "battery_text": "91%",
     "chapter_text": "4; Arthur de Gobineau",

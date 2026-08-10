@@ -10,6 +10,41 @@
     "current_page": 31,
     "total_pages": 118,
     "progress_percent": 6,
+    "themes": [
+        {
+            "concept_id": "C004",
+            "concept_name": "Modernization",
+            "parent_concept": "Political Development",
+            "matched_keywords": [
+                "progress"
+            ]
+        },
+        {
+            "concept_id": "C005",
+            "concept_name": "State Capacity",
+            "parent_concept": "Political Development",
+            "matched_keywords": [
+                "governing"
+            ]
+        },
+        {
+            "concept_id": "C006",
+            "concept_name": "Military Modernization",
+            "parent_concept": "State Capacity",
+            "matched_keywords": [
+                "conquering"
+            ]
+        },
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "europe",
+                "european"
+            ]
+        }
+    ],
     "body_text": "of the Russo-Iranian wars are rare due to the official\nchroniclers’ wariness not to offend their courtly\npatrons. Nevertheless, two extant testimonies relay\nthe scope of the Qajar court’s incomprehension after\nthe defeats. First we have Crown Prince and military\ncommander Abbas Mirza Qajar’s (1789-1833) naive\nand frankly bitter question to a European dignitary as\nearly as 1805: “What is the power that gives [Europe]\nso great a superiority over us? What is the cause of\nyour progress and of our constant weakness? You\nknow the art of governing, the art of conquering,",
     "battery_text": "W6%",
     "chapter_text": "1. The Paleontology of Iranian Nationalism",

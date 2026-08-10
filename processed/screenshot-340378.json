@@ -10,6 +10,24 @@
     "current_page": 13,
     "total_pages": 105,
     "progress_percent": 37,
+    "themes": [
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "aryan"
+            ]
+        },
+        {
+            "concept_id": "C007",
+            "concept_name": "Imperialism",
+            "parent_concept": "International Political Economy",
+            "matched_keywords": [
+                "imperial"
+            ]
+        }
+    ],
     "body_text": "“others,” the “inferior races.” This glorification of\nthe white man was a convenient justification for the\nimperial endeavors in which Europeans were engaged\nat the time. It is this racialist and politicized version of\nthe Aryan myth and its extension into Iranian thought\nthat is the subject of this chapter, although a detour by\nits more philological aspects is necessary to define the\nphenomenon.\n\nThe origin of the Aryan myth is usually associated with\n\nSir William Jones’s discovery in 1786 that Greek, Latin,\nSanskrit. and Persian derived from common roots.",
     "battery_text": "53%",
     "chapter_text": ": 6, Aryanism and Dislocation",

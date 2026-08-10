@@ -14,7 +14,7 @@ match_confidence: 1.0
 
 ## Source
 
-**Book:** [[The Prophets of Doom]]
+**Book:** [[The Prophets of Doom|The Prophets of Doom]]
 
 **Author:** Neema Parvini
 
@@ -50,7 +50,8 @@ _To be generated later._
 
 ## Themes
 
-_To be added._
+- [[Capitalism]]
+- [[Social Decline]]
 
 ## Connections
 

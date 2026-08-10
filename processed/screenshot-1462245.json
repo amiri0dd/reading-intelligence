@@ -10,6 +10,24 @@
     "current_page": 55,
     "total_pages": 74,
     "progress_percent": 74,
+    "themes": [
+        {
+            "concept_id": "C011",
+            "concept_name": "Banking",
+            "parent_concept": "Finance",
+            "matched_keywords": [
+                "bank"
+            ]
+        },
+        {
+            "concept_id": "C012",
+            "concept_name": "Money",
+            "parent_concept": "Finance",
+            "matched_keywords": [
+                "money"
+            ]
+        }
+    ],
     "body_text": "central bank becomes independent elected politicians\nis this: rather than having a central bank as neutral as\n\nthe Red Cross, we end up with a central bank whose\n\ndecisions remain as political as ever, except that they\nare no longer supervised by Parliament. As a result,\nthey end up more dependent than ever on the political\nand financial might of the powerful unelected few: the\noligarchy and the bankers.\n\nAn attempt to depoliticize money: Bitcoin",
     "battery_text": "68%",
     "chapter_text": "7 The Dangerous Fantasy of Apolitical Money",

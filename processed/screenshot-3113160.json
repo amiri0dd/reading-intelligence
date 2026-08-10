@@ -10,6 +10,51 @@
     "current_page": 151,
     "total_pages": 155,
     "progress_percent": 18,
+    "themes": [
+        {
+            "concept_id": "C002",
+            "concept_name": "Nationalism",
+            "parent_concept": "Political Identity",
+            "matched_keywords": [
+                "nationalist"
+            ]
+        },
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "racial"
+            ]
+        },
+        {
+            "concept_id": "C004",
+            "concept_name": "Modernization",
+            "parent_concept": "Political Development",
+            "matched_keywords": [
+                "modernity",
+                "reform"
+            ]
+        },
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "europe",
+                "european"
+            ]
+        },
+        {
+            "concept_id": "C020",
+            "concept_name": "Ideology",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "ideology",
+                "ideological"
+            ]
+        }
+    ],
     "body_text": "Kermani’s contribution: transmission, radicalization,\nand the addition of a conceptually informed version\nof European racial thought. This nationalist doctrine\nonly perfunctorily attempted to provide Iran with a\nvalid project of reform and adaptation to modernity.\nInstead, it took the shape of a predominantly discursive\nand historicist ideology whose main objective was\nto soothe the pain of the traumatic encounter with\nEurope while making sense of Iran’s backwardness.\n\nThis ideological tradition is not without incoherence\nor ethical ambicuities. and the bizarre contradictions",
     "battery_text": "WM61% 2",
     "chapter_text": "2. Akhundzadeh and Kermani: The Emergence of Dislocative Nationali..,",

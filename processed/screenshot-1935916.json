@@ -10,6 +10,25 @@
     "current_page": 65,
     "total_pages": 121,
     "progress_percent": 28,
+    "themes": [
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "aryanism"
+            ]
+        },
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "europe",
+                "european"
+            ]
+        }
+    ],
     "body_text": "the encounter with Europe. They were concerned\nwith making sense of Europe’s advance and Iran's\nbackwardness and—impressed to the highest\npossible degree by the immediate experience of life\nin mid-nineteenth-century Europe, itself imbued\nwith the euphoria of scientific positivism—would\nreadily accept any conclusion put forth by European\nscholarship. The contempt in which things Islamic\nwere held there undoubtedly tempted these Iranians\nto shun, as far as European Aryanism assisted\nthem in doing so, any connection to Islam and",
     "battery_text": "M5m% 4",
     "chapter_text": "4, Of Lizard Eaters and Invasions: The Import of European Racial Thought",

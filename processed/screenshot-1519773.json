@@ -10,6 +10,42 @@
     "current_page": 97,
     "total_pages": 155,
     "progress_percent": 16,
+    "themes": [
+        {
+            "concept_id": "C003",
+            "concept_name": "Race",
+            "parent_concept": "Identity and Ideology",
+            "matched_keywords": [
+                "racial",
+                "aryan"
+            ]
+        },
+        {
+            "concept_id": "C004",
+            "concept_name": "Modernization",
+            "parent_concept": "Political Development",
+            "matched_keywords": [
+                "progress"
+            ]
+        },
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "european",
+                "the west"
+            ]
+        },
+        {
+            "concept_id": "C018",
+            "concept_name": "Civilization",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "civilization"
+            ]
+        }
+    ],
     "body_text": "no less than five thousand French words. He mentions\nmort and mord, pére and pedar, dent and dandan,\ngenou and zdnu, and so on. His assessment of these\nsimilarities derives from the Aryan hypothesis that\nattributed the linguistic similarities of Indo-European\nlanguages to racial kinship:\n\nOne brother migrated to the West and like France\nattained that degree of progress, civilization, wealth,\ngrandeur and humanity, while this other brother\nwho is Persian, became tied down in the Orient with",
     "battery_text": "WM61% 2",
     "chapter_text": "2, Akhundzadeh and Kermani: The Emergence of Dislocative Nationalism",

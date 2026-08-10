@@ -1,11 +1,12 @@
 from pathlib import Path
 
+from src.analysis.theme_extractor import extract_themes
 from src.classification.book_matcher import match_book_by_chapter
 from src.classification.footer_parser import parse_footer
 from src.export.json_exporter import save_record_as_json
+from src.export.markdown_exporter import export_passage_to_obsidian
 from src.ingestion.image_converter import convert_bmp_to_png
 from src.ocr.region_extractor import extract_regions
-from src.export.markdown_exporter import export_passage_to_obsidian
 
 
 def process_screenshot(image_path: str) -> dict:
@@ -35,7 +36,12 @@ def process_screenshot(image_path: str) -> dict:
         metadata["chapter"]
     )
 
-    # Step 5: Combine everything into one record
+    # Step 5: Extract controlled themes from the passage
+    themes = extract_themes(
+        regions["body_text"]
+    )
+
+    # Step 6: Combine everything into one record
     record = {
         "original_image": str(input_file),
         "png_image": str(png_path),
@@ -51,6 +57,8 @@ def process_screenshot(image_path: str) -> dict:
         "total_pages": metadata["total_pages"],
         "progress_percent": metadata["progress_percent"],
 
+        "themes": themes,
+
         "body_text": regions["body_text"],
         "battery_text": regions["battery_text"],
         "chapter_text": regions["chapter_text"],
@@ -61,7 +69,9 @@ def process_screenshot(image_path: str) -> dict:
 
 
 if __name__ == "__main__":
-    result = process_screenshot("screenshots/sample_page.bmp")
+    result = process_screenshot(
+        "screenshots/sample_page.bmp"
+    )
 
     print("\nSTRUCTURED RECORD")
     print("=" * 60)
@@ -73,8 +83,8 @@ if __name__ == "__main__":
         result,
         "processed/sample_page.json"
     )
-    
+
     export_passage_to_obsidian(
-    result,
-    "vault"
-)
+        result,
+        "vault"
+    )

@@ -14,7 +14,7 @@ match_confidence: 1.0
 
 ## Source
 
-**Book:** [[Talking to My Daughter About the Economy]]
+**Book:** [[Talking to My Daughter About the Economy|Talking to My Daughter About the Economy]]
 
 **Author:** Yanis Varoufakis
 
@@ -50,7 +50,7 @@ _To be generated later._
 
 ## Themes
 
-_To be added._
+_No concepts detected yet._
 
 ## Connections
 

@@ -10,6 +10,16 @@
     "current_page": 21,
     "total_pages": 32,
     "progress_percent": 29,
+    "themes": [
+        {
+            "concept_id": "C010",
+            "concept_name": "Debt",
+            "parent_concept": "Political Economy",
+            "matched_keywords": [
+                "debt"
+            ]
+        }
+    ],
     "body_text": "Do you see now how debt, not coal, was the real\nfuel that powered the engine of the Industrial\nRevolution, generating mountains of wealth for a\nfew and unspeakable misery for the rest? In market\nsocieties all wealth is nourished by debt and all of\nthe unimaginable riches created over the past three\ncenturies ultimately owe their existence to debt.\n\nas Doctor Faustus shows us, is to market societies what\nhell is to Christianity: unpleasant yet indispensable.\n\nTin edaw DCoresadesan ase Dhamanwae Camanren",
     "battery_text": "a7",
     "chapter_text": "OS The Marriage of Debt and Profit",

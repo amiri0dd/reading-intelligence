@@ -10,6 +10,33 @@
     "current_page": 32,
     "total_pages": 35,
     "progress_percent": 90,
+    "themes": [
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "europe"
+            ]
+        },
+        {
+            "concept_id": "C017",
+            "concept_name": "Social Decline",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "decline",
+                "collapse"
+            ]
+        },
+        {
+            "concept_id": "C018",
+            "concept_name": "Civilization",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "civilisational"
+            ]
+        }
+    ],
     "body_text": "and have done so throughout history. The Persians,\nas one example, scaled the heights of Cyrus the Great,\nthe Sassanids and, much later, the Safavids, but also\nsuffered humiliations by the Greeks, the Arabs, and\nthe Mongols. Iran is still there, undergoing, as Toynbee\nmight say, a period of ‘withdrawal’. Rome has been\nsacked at least eight times in its history, it’s still one of\nthe largest cities in Europe.\n\nWe tend to think of any decline as catastrophic, but\n‘collapse’ never means ‘the end’. A people who starts to\nunderstand itself in civilisational terms. rather than in",
     "battery_text": "738%",
     "chapter_text": "13: Conclusion :",

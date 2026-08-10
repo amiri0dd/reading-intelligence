@@ -10,6 +10,24 @@
     "current_page": 51,
     "total_pages": 63,
     "progress_percent": 29,
+    "themes": [
+        {
+            "concept_id": "C008",
+            "concept_name": "Europe",
+            "parent_concept": "Geography and Civilization",
+            "matched_keywords": [
+                "europe"
+            ]
+        },
+        {
+            "concept_id": "C018",
+            "concept_name": "Civilization",
+            "parent_concept": "Political Theory",
+            "matched_keywords": [
+                "civilization"
+            ]
+        }
+    ],
     "body_text": "that some commentators can instinctually recognise\ntoday. For example, when Douglas Murray writes in\nThe Strange Death of Europe of ‘Europe-fatigue’, an\n‘existential tiredness’, and ‘burnout’, he is registering\nwhat Gobineau would recognise as the total dissipation\nof chivalric energy—the will is no longer there. Or\nwhen Murray says that Pakistanis living in Britain\ndo not ‘become as British as anybody else’, but\nrather turn their areas into miniature versions of\nPakistan,[38] he is rearticulating Gobineau’s insight\nthat ‘civilization is incommunicable’-—which is to",
     "battery_text": "91%",
     "chapter_text": "4; Arthur de Gobineau",
