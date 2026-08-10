@@ -216,3 +216,32 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Personal reading data
+vault/
+data/
+inbox/
+originals/
+processed/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Secrets
+.env
+
+# Virtual environment
+.venv/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+# Screenshots
+screenshots/
+# Vault
+vault/
+# Private typed reading notes
+typed_notes/

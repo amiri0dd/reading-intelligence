@@ -1,107 +1,260 @@
-import json
 from pathlib import Path
+import json
+import re
 
+import numpy as np
 from sentence_transformers import SentenceTransformer
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 
-def load_processed_records(
-    processed_folder: str = "processed",
+def sanitize_filename(name: str) -> str:
+    """
+    Match the filename sanitization used by the Obsidian exporters.
+    """
+    name = re.sub(r'[<>:"/\\|?*]', "-", name)
+    name = re.sub(r"\s+", " ", name)
+    return name.strip()
+
+
+def build_screenshot_note_name(record: dict) -> str:
+    """
+    Reconstruct the Obsidian note name for an Xteink passage.
+    """
+
+    chapter = record.get("chapter") or "Unknown Chapter"
+
+    current_page = record.get("current_page")
+    total_pages = record.get("total_pages")
+
+    if current_page is not None and total_pages is not None:
+        name = f"{chapter} ({current_page}/{total_pages})"
+    else:
+        name = chapter
+
+    return sanitize_filename(name)
+
+
+def build_typed_note_name(record: dict) -> str:
+    """
+    Reconstruct the Obsidian note name for a typed book passage.
+    """
+
+    return sanitize_filename(
+        f"{record['book_title']} - {record['record_id']}"
+    )
+
+
+def normalize_screenshot_record(record: dict) -> dict | None:
+    """
+    Normalize an Xteink screenshot record for semantic comparison.
+    """
+
+    text = record.get("body_text", "").strip()
+
+    if not text:
+        return None
+
+    chapter = record.get("chapter", "")
+
+    semantic_text = "\n".join(
+        part
+        for part in [
+            chapter,
+            text,
+        ]
+        if part
+    )
+
+    original_image = record.get(
+        "original_image",
+        ""
+    )
+
+    passage_id = (
+        Path(original_image).stem
+        if original_image
+        else record.get("png_image", "unknown")
+    )
+
+    return {
+        "passage_id": passage_id,
+        "source_kind": "xteink",
+        "book_id": record.get("book_id"),
+        "book_title": record.get("book_title"),
+        "author": record.get("author"),
+        "chapter": chapter,
+        "content_type": "book_quote",
+        "provenance": "book",
+        "text": text,
+        "semantic_text": semantic_text,
+        "note_name": build_screenshot_note_name(record),
+    }
+
+
+def normalize_typed_record(record: dict) -> dict | None:
+    """
+    Normalize a typed passage record.
+
+    For v1 semantic linking, only actual book quotations
+    participate in passage-to-passage similarity.
+    """
+
+    if record.get("content_type") != "book_quote":
+        return None
+
+    text = record.get("text", "").strip()
+
+    if not text:
+        return None
+
+    return {
+        "passage_id": record.get("record_id"),
+        "source_kind": "typed_document",
+        "book_id": record.get("book_id"),
+        "book_title": record.get("book_title"),
+        "author": record.get("author"),
+        "chapter": "",
+        "content_type": record.get("content_type"),
+        "provenance": record.get("provenance"),
+        "text": text,
+        "semantic_text": text,
+        "note_name": build_typed_note_name(record),
+    }
+
+
+def load_semantic_records(
+    processed_path: str = "processed",
 ) -> list[dict]:
     """
-    Load all processed screenshot JSON records.
+    Load Xteink and typed passage JSON records.
     """
 
-    folder = Path(processed_folder)
-
-    if not folder.exists():
-        raise FileNotFoundError(
-            f"Could not find processed folder: {folder}"
-        )
+    root = Path(processed_path)
 
     records = []
 
-    for json_file in sorted(folder.glob("*.json")):
-        with json_file.open(
-            "r",
-            encoding="utf-8",
-        ) as file:
-            record = json.load(file)
+    # --------------------------------------------------
+    # Xteink screenshot records
+    # --------------------------------------------------
 
-        record["_json_file"] = str(json_file)
+    for json_file in root.glob("*.json"):
 
-        records.append(record)
+        if json_file.name == "connections.json":
+            continue
+
+        try:
+            with json_file.open(
+                "r",
+                encoding="utf-8",
+            ) as file:
+                raw = json.load(file)
+
+        except (json.JSONDecodeError, OSError):
+            continue
+
+        if not isinstance(raw, dict):
+            continue
+
+        normalized = normalize_screenshot_record(raw)
+
+        if normalized:
+            records.append(normalized)
+
+    # --------------------------------------------------
+    # Typed-document records
+    # --------------------------------------------------
+
+    typed_directory = root / "typed_notes"
+
+    if typed_directory.exists():
+
+        for json_file in typed_directory.glob("*.json"):
+
+            try:
+                with json_file.open(
+                    "r",
+                    encoding="utf-8",
+                ) as file:
+                    raw = json.load(file)
+
+            except (json.JSONDecodeError, OSError):
+                continue
+
+            if not isinstance(raw, dict):
+                continue
+
+            normalized = normalize_typed_record(raw)
+
+            if normalized:
+                records.append(normalized)
 
     return records
 
 
-def build_passage_text(record: dict) -> str:
-    """
-    Build the text representation used for semantic comparison.
-
-    We combine the chapter title and passage body so the embedding
-    has some contextual information.
-    """
-
-    chapter = record.get("chapter") or ""
-    body = record.get("body_text") or ""
-
-    return f"{chapter}\n\n{body}".strip()
-
-
 def find_semantic_connections(
-    processed_folder: str = "processed",
+    processed_path: str = "processed",
     minimum_similarity: float = 0.55,
     max_connections_per_passage: int = 3,
     cross_book_only: bool = True,
 ) -> list[dict]:
     """
-    Find semantically related passages.
+    Find semantic passage relationships across the entire
+    reading library.
 
-    Parameters
-    ----------
-    processed_folder:
-        Folder containing JSON records.
-
-    minimum_similarity:
-        Minimum similarity score required for a connection.
-
-    max_connections_per_passage:
-        Maximum number of suggestions generated for each passage.
-
-    cross_book_only:
-        If True, only connect passages from different books.
+    Reciprocal duplicates are prevented automatically.
     """
 
-    records = load_processed_records(
-        processed_folder
+    records = load_semantic_records(
+        processed_path
     )
 
     if len(records) < 2:
         print(
-            "Need at least two processed passages "
-            "to calculate semantic connections."
+            "Not enough passage records for semantic linking."
         )
         return []
 
-    texts = [
-        build_passage_text(record)
-        for record in records
-    ]
+    print()
+    print("=" * 70)
+    print("SEMANTIC LINKING")
+    print("=" * 70)
 
     print(
-        f"Loading semantic model: {MODEL_NAME}"
+        f"Passages available: {len(records)}"
+    )
+
+    screenshot_count = sum(
+        record["source_kind"] == "xteink"
+        for record in records
+    )
+
+    typed_count = sum(
+        record["source_kind"] == "typed_document"
+        for record in records
+    )
+
+    print(
+        f"Xteink passages: {screenshot_count}"
+    )
+
+    print(
+        f"Typed passages: {typed_count}"
+    )
+
+    print(
+        f"Minimum similarity: {minimum_similarity}"
     )
 
     model = SentenceTransformer(
         MODEL_NAME
     )
 
-    print(
-        f"Encoding {len(texts)} passages..."
-    )
+    texts = [
+        record["semantic_text"]
+        for record in records
+    ]
 
     embeddings = model.encode(
         texts,
@@ -109,36 +262,34 @@ def find_semantic_connections(
         show_progress_bar=True,
     )
 
-    # Because embeddings are normalized, matrix multiplication
-    # gives cosine similarity.
     similarity_matrix = (
         embeddings @ embeddings.T
     )
 
     connections = []
 
-    for source_index, source_record in enumerate(records):
+    seen_pairs = set()
+
+    for source_index, source in enumerate(records):
 
         candidates = []
 
-        for target_index, target_record in enumerate(records):
+        for target_index, target in enumerate(records):
 
-            # Never compare a passage with itself.
             if source_index == target_index:
                 continue
 
-            # Optional: only discover cross-book relationships.
             if (
                 cross_book_only
-                and source_record.get("book_id")
-                == target_record.get("book_id")
+                and source["book_id"]
+                == target["book_id"]
             ):
                 continue
 
             score = float(
                 similarity_matrix[
                     source_index,
-                    target_index
+                    target_index,
                 ]
             )
 
@@ -146,14 +297,14 @@ def find_semantic_connections(
                 continue
 
             candidates.append(
-                {
-                    "target_index": target_index,
-                    "similarity": score,
-                }
+                (
+                    target_index,
+                    score,
+                )
             )
 
         candidates.sort(
-            key=lambda item: item["similarity"],
+            key=lambda item: item[1],
             reverse=True,
         )
 
@@ -161,107 +312,133 @@ def find_semantic_connections(
             :max_connections_per_passage
         ]
 
-        for candidate in candidates:
-            target_record = records[
-                candidate["target_index"]
-            ]
+        for target_index, score in candidates:
 
-            connection = {
-                "source_image": Path(
-                    source_record["original_image"]
-                ).name,
-                "source_book_id": source_record.get(
-                    "book_id"
-                ),
-                "source_book": source_record.get(
-                    "book_title"
-                ),
-                "source_chapter": source_record.get(
-                    "chapter"
-                ),
+            target = records[target_index]
 
-                "target_image": Path(
-                    target_record["original_image"]
-                ).name,
-                "target_book_id": target_record.get(
-                    "book_id"
-                ),
-                "target_book": target_record.get(
-                    "book_title"
-                ),
-                "target_chapter": target_record.get(
-                    "chapter"
-                ),
+            pair_key = tuple(
+                sorted(
+                    [
+                        (
+                            source["source_kind"],
+                            str(source["passage_id"]),
+                        ),
+                        (
+                            target["source_kind"],
+                            str(target["passage_id"]),
+                        ),
+                    ]
+                )
+            )
 
-                "similarity": round(
-                    candidate["similarity"],
-                    3,
-                ),
-                "relationship_type": (
-                    "semantic_similarity"
-                ),
-            }
+            if pair_key in seen_pairs:
+                continue
+
+            seen_pairs.add(pair_key)
 
             connections.append(
-                connection
+                {
+                    "source_id": source[
+                        "passage_id"
+                    ],
+                    "source_kind": source[
+                        "source_kind"
+                    ],
+                    "source_book_id": source[
+                        "book_id"
+                    ],
+                    "source_book": source[
+                        "book_title"
+                    ],
+                    "source_chapter": source[
+                        "chapter"
+                    ],
+                    "source_note": source[
+                        "note_name"
+                    ],
+                    "target_id": target[
+                        "passage_id"
+                    ],
+                    "target_kind": target[
+                        "source_kind"
+                    ],
+                    "target_book_id": target[
+                        "book_id"
+                    ],
+                    "target_book": target[
+                        "book_title"
+                    ],
+                    "target_chapter": target[
+                        "chapter"
+                    ],
+                    "target_note": target[
+                        "note_name"
+                    ],
+                    "similarity": round(
+                        score,
+                        3,
+                    ),
+                    "relationship_type":
+                        "semantic_similarity",
+                }
             )
+
+    connections.sort(
+        key=lambda connection:
+            connection["similarity"],
+        reverse=True,
+    )
+
+    print(
+        f"Semantic connections found: "
+        f"{len(connections)}"
+    )
 
     return connections
 
 
 def save_connections(
     connections: list[dict],
-    output_path: str = "processed/connections.json",
+    output_path: str = (
+        "processed/connections.json"
+    ),
 ) -> Path:
     """
-    Save semantic relationships to JSON.
+    Save semantic connections as JSON.
     """
 
-    output_file = Path(output_path)
+    path = Path(output_path)
 
-    output_file.parent.mkdir(
+    path.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    with output_file.open(
+    with path.open(
         "w",
         encoding="utf-8",
     ) as file:
         json.dump(
             connections,
             file,
+            indent=2,
             ensure_ascii=False,
-            indent=4,
         )
 
     print(
-        f"Saved semantic connections: {output_file}"
+        f"Saved semantic connections: {path}"
     )
 
-    return output_file
+    return path
 
 
 if __name__ == "__main__":
-    connections = find_semantic_connections()
 
-    print("\nSEMANTIC CONNECTIONS")
-    print("=" * 60)
-
-    for connection in connections:
-        print()
-        print(
-            f"{connection['source_book']} "
-            f"→ {connection['target_book']}"
-        )
-        print(
-            f"{connection['source_chapter']} "
-            f"→ {connection['target_chapter']}"
-        )
-        print(
-            f"Similarity: "
-            f"{connection['similarity']}"
-        )
+    connections = find_semantic_connections(
+        minimum_similarity=0.55,
+        max_connections_per_passage=3,
+        cross_book_only=True,
+    )
 
     save_connections(
         connections

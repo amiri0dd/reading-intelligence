@@ -1,114 +1,159 @@
-from src.export.concept_exporter import export_concept_pages
-from src.export.obsidian_exporter import export_screenshot_folder_to_obsidian
+from pathlib import Path
+
 from src.ingestion.batch_processor import process_folder
-from src.linking.connection_exporter import export_connections_to_obsidian
+from src.export.obsidian_exporter import (
+    export_screenshot_folder_to_obsidian,
+)
+from src.export.concept_exporter import (
+    export_concept_pages,
+)
+from src.export.typed_notes_exporter import (
+    export_typed_notes_to_obsidian,
+)
 from src.linking.semantic_linker import (
     find_semantic_connections,
     save_connections,
 )
+from src.linking.connection_exporter import (
+    export_connections_to_obsidian,
+)
+
+
+SCREENSHOTS_DIR = Path("screenshots")
+TYPED_NOTES_FILE = Path(
+    "typed_notes/quote_analysis.docx"
+)
+
+
+def print_stage(number: int, title: str) -> None:
+    print()
+    print("=" * 70)
+    print(
+        f"STEP {number}: {title}"
+    )
+    print("=" * 70)
 
 
 def run_pipeline() -> None:
-    """
-    Run the complete Reading Intelligence workflow.
-
-    Pipeline:
-    1. Process screenshots
-    2. Export passages and books to Obsidian
-    3. Build concept pages
-    4. Find cross-book semantic connections
-    5. Export accepted connections to Obsidian
-    """
 
     print()
     print("=" * 70)
     print("READING INTELLIGENCE")
+    print("FULL UPDATE PIPELINE")
     print("=" * 70)
 
-    # ---------------------------------------------------------
-    # Step 1: Process screenshots
-    # ---------------------------------------------------------
+    # --------------------------------------------------
+    # 1. Xteink screenshots
+    # --------------------------------------------------
 
-    print()
-    print("STEP 1: PROCESSING SCREENSHOTS")
-    print("=" * 70)
-
-    process_folder(
-        input_folder="screenshots",
-        output_folder="processed",
+    print_stage(
+        1,
+        "PROCESS XTEINK SCREENSHOTS",
     )
 
-    # ---------------------------------------------------------
-    # Step 2: Export passages and books to Obsidian
-    # ---------------------------------------------------------
+    if SCREENSHOTS_DIR.exists():
 
-    print()
-    print("STEP 2: UPDATING OBSIDIAN PASSAGES AND BOOKS")
-    print("=" * 70)
+        process_folder()
 
-    export_screenshot_folder_to_obsidian(
-        input_folder="screenshots",
-        vault_path="vault",
+    else:
+        print(
+            "No screenshots folder found. "
+            "Skipping screenshot processing."
+        )
+
+    # --------------------------------------------------
+    # 2. Screenshot → Obsidian
+    # --------------------------------------------------
+
+    print_stage(
+        2,
+        "EXPORT XTEINK PASSAGES TO OBSIDIAN",
     )
 
-    # ---------------------------------------------------------
-    # Step 3: Build concept pages
-    # ---------------------------------------------------------
+    if SCREENSHOTS_DIR.exists():
 
-    print()
-    print("STEP 3: UPDATING CONCEPT PAGES")
-    print("=" * 70)
+        export_screenshot_folder_to_obsidian()
 
-    export_concept_pages(
-        input_folder="screenshots",
-        vault_path="vault",
+    else:
+        print(
+            "Skipping Xteink Obsidian export."
+        )
+
+    # --------------------------------------------------
+    # 3. Typed notes
+    # --------------------------------------------------
+
+    print_stage(
+        3,
+        "PROCESS TYPED READING NOTES",
     )
 
-    # ---------------------------------------------------------
-    # Step 4: Find cross-book semantic connections
-    # ---------------------------------------------------------
+    if TYPED_NOTES_FILE.exists():
 
-    print()
-    print("STEP 4: FINDING CROSS-BOOK CONNECTIONS")
-    print("=" * 70)
+        export_typed_notes_to_obsidian(
+            str(TYPED_NOTES_FILE)
+        )
 
-    connections = find_semantic_connections(
-        processed_folder="processed",
-        minimum_similarity=0.55,
-        max_connections_per_passage=3,
-        cross_book_only=True,
+    else:
+        print(
+            "No typed notes DOCX found. "
+            "Skipping typed-note processing."
+        )
+
+    # --------------------------------------------------
+    # 4. Concepts
+    # --------------------------------------------------
+
+    print_stage(
+        4,
+        "UPDATE CONCEPT PAGES",
+    )
+
+    export_concept_pages()
+
+    # --------------------------------------------------
+    # 5. Semantic relationships
+    # --------------------------------------------------
+
+    print_stage(
+        5,
+        "BUILD CROSS-BOOK CONNECTIONS",
+    )
+
+    connections = (
+        find_semantic_connections(
+            minimum_similarity=0.55,
+            max_connections_per_passage=3,
+            cross_book_only=True,
+        )
     )
 
     save_connections(
-        connections,
-        output_path="processed/connections.json",
+        connections
     )
 
-    # ---------------------------------------------------------
-    # Step 5: Write stronger connections into Obsidian
-    # ---------------------------------------------------------
+    # --------------------------------------------------
+    # 6. Write connections to Obsidian
+    # --------------------------------------------------
 
-    print()
-    print("STEP 5: UPDATING OBSIDIAN CONNECTIONS")
-    print("=" * 70)
+    print_stage(
+        6,
+        "WRITE CONNECTIONS TO OBSIDIAN",
+    )
 
     export_connections_to_obsidian(
-        connections_path="processed/connections.json",
-        vault_path="vault",
-        minimum_similarity=0.55,
+        minimum_similarity=0.55
     )
-
-    # ---------------------------------------------------------
-    # Complete
-    # ---------------------------------------------------------
 
     print()
     print("=" * 70)
     print("READING INTELLIGENCE UPDATE COMPLETE")
     print("=" * 70)
+
     print()
-    print("Your Obsidian vault has been updated.")
-    print()
+    print(
+        "Your Obsidian vault is ready."
+    )
 
 
 if __name__ == "__main__":

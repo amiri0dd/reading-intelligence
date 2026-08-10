@@ -1,328 +1,193 @@
-import json
 from pathlib import Path
+import json
 
-from src.export.markdown_exporter import sanitize_filename
+
+VAULT_PASSAGES_DIR = Path("vault/Passages")
 
 
 def load_connections(
-    connections_path: str = "processed/connections.json",
+    path: str = "processed/connections.json",
 ) -> list[dict]:
-    """
-    Load semantic connections from JSON.
-    """
 
-    path = Path(connections_path)
+    input_path = Path(path)
 
-    if not path.exists():
-        raise FileNotFoundError(
-            f"Could not find connections file: {path}"
-        )
+    if not input_path.exists():
+        return []
 
-    with path.open("r", encoding="utf-8") as file:
+    with input_path.open(
+        "r",
+        encoding="utf-8",
+    ) as file:
         return json.load(file)
 
 
-def deduplicate_connections(
-    connections: list[dict],
-) -> list[dict]:
-    """
-    Remove reciprocal duplicates such as:
-
-    A -> B
-    B -> A
-
-    keeping only one copy of each pair.
-    """
-
-    unique = []
-    seen_pairs = set()
-
-    for connection in connections:
-        source = connection["source_image"]
-        target = connection["target_image"]
-
-        pair_key = tuple(sorted([source, target]))
-
-        if pair_key in seen_pairs:
-            continue
-
-        seen_pairs.add(pair_key)
-        unique.append(connection)
-
-    return unique
-
-
-def build_passage_note_name(
-    book_title: str,
-    chapter: str,
-    image_name: str,
+def connection_strength(
+    similarity: float,
 ) -> str:
-    """
-    Reconstruct the passage note filename used by
-    markdown_exporter.py.
-    """
 
-    image_stem = Path(image_name).stem
-
-    return sanitize_filename(
-        f"{book_title} - {chapter} - {image_stem}"
-    )
-
-
-def classify_strength(score: float) -> str:
-    """
-    Human-readable relationship strength.
-    """
-
-    if score >= 0.70:
+    if similarity >= 0.70:
         return "Strong"
 
-    if score >= 0.60:
+    if similarity >= 0.60:
         return "Suggested"
 
     return "Weak"
 
 
-def build_connection_map(
-    connections: list[dict],
-    minimum_similarity: float = 0.60,
-) -> dict[str, list[dict]]:
-    """
-    Convert connection pairs into a mapping where
-    each passage receives links to its related passages.
-
-    A single stored A-B relationship is written into
-    both passage A and passage B.
-    """
-
-    connection_map = {}
-
-    for connection in connections:
-        score = float(connection["similarity"])
-
-        if score < minimum_similarity:
-            continue
-
-        source_note = build_passage_note_name(
-            connection["source_book"],
-            connection["source_chapter"],
-            connection["source_image"],
-        )
-
-        target_note = build_passage_note_name(
-            connection["target_book"],
-            connection["target_chapter"],
-            connection["target_image"],
-        )
-
-        strength = classify_strength(score)
-
-        source_entry = {
-            "note_name": target_note,
-            "book": connection["target_book"],
-            "chapter": connection["target_chapter"],
-            "similarity": score,
-            "strength": strength,
-        }
-
-        target_entry = {
-            "note_name": source_note,
-            "book": connection["source_book"],
-            "chapter": connection["source_chapter"],
-            "similarity": score,
-            "strength": strength,
-        }
-
-        connection_map.setdefault(
-            source_note,
-            []
-        ).append(source_entry)
-
-        connection_map.setdefault(
-            target_note,
-            []
-        ).append(target_entry)
-
-    return connection_map
-
-
-def format_connections(
-    connections: list[dict],
+def build_connection_line(
+    other_note: str,
+    other_book: str,
+    similarity: float,
 ) -> str:
-    """
-    Convert related passages into Obsidian Markdown.
-    """
 
-    if not connections:
-        return "_No strong cross-book connections detected yet._"
-
-    connections = sorted(
-        connections,
-        key=lambda item: item["similarity"],
-        reverse=True,
+    strength = connection_strength(
+        similarity
     )
 
-    lines = []
-
-    for connection in connections:
-        lines.append(
-            f"- [[{connection['note_name']}|"
-            f"{connection['book']} — "
-            f"{connection['chapter']}]]"
-        )
-
-        lines.append(
-            f"  - {connection['strength']} semantic connection "
-            f"({connection['similarity']:.3f})"
-        )
-
-    return "\n".join(lines)
+    return (
+        f"- [[{other_note}]] "
+        f"({other_book}) "
+        f"— {strength} semantic connection "
+        f"({similarity:.3f})"
+    )
 
 
 def replace_connections_section(
-    note_text: str,
-    new_connections: str,
-) -> str:
+    note_path: Path,
+    lines: list[str],
+) -> None:
     """
-    Replace the generated ## Connections section
-    without altering the rest of the passage note.
+    Replace only the generated Connections section of
+    an existing passage note.
     """
+
+    if not note_path.exists():
+        print(
+            f"Warning: passage note not found: "
+            f"{note_path}"
+        )
+        return
+
+    text = note_path.read_text(
+        encoding="utf-8"
+    )
 
     heading = "## Connections"
 
-    if heading not in note_text:
-        return (
-            note_text.rstrip()
-            + "\n\n"
-            + heading
-            + "\n\n"
-            + new_connections
-            + "\n"
-        )
+    if heading in text:
+        before = text.split(
+            heading,
+            1,
+        )[0].rstrip()
 
-    before, after = note_text.split(
-        heading,
-        maxsplit=1,
-    )
-
-    # Find the next level-2 heading after Connections.
-    next_heading_index = after.find("\n## ")
-
-    if next_heading_index == -1:
-        return (
+        new_text = (
             before
+            + "\n\n"
             + heading
             + "\n\n"
-            + new_connections
+            + "\n".join(lines)
             + "\n"
         )
 
-    remaining = after[next_heading_index:]
+    else:
+        new_text = (
+            text.rstrip()
+            + "\n\n"
+            + heading
+            + "\n\n"
+            + "\n".join(lines)
+            + "\n"
+        )
 
-    return (
-        before
-        + heading
-        + "\n\n"
-        + new_connections
-        + remaining
+    note_path.write_text(
+        new_text,
+        encoding="utf-8",
     )
 
 
 def export_connections_to_obsidian(
-    connections_path: str = "processed/connections.json",
-    vault_path: str = "vault",
-    minimum_similarity: float = 0.60,
+    connections_path: str = (
+        "processed/connections.json"
+    ),
+    minimum_similarity: float = 0.55,
 ) -> None:
-    """
-    Write filtered semantic connections into
-    Obsidian passage notes.
-    """
 
     connections = load_connections(
         connections_path
     )
 
-    deduplicated = deduplicate_connections(
-        connections
-    )
+    note_connections = {}
 
-    connection_map = build_connection_map(
-        deduplicated,
-        minimum_similarity=minimum_similarity,
-    )
+    for connection in connections:
 
-    passages_folder = (
-        Path(vault_path)
-        / "Passages"
-    )
+        score = connection[
+            "similarity"
+        ]
 
-    if not passages_folder.exists():
-        raise FileNotFoundError(
-            f"Could not find passage folder: {passages_folder}"
+        if score < minimum_similarity:
+            continue
+
+        source_note = connection[
+            "source_note"
+        ]
+
+        target_note = connection[
+            "target_note"
+        ]
+
+        source_line = build_connection_line(
+            other_note=target_note,
+            other_book=connection[
+                "target_book"
+            ],
+            similarity=score,
         )
 
-    updated = 0
-    missing = []
+        target_line = build_connection_line(
+            other_note=source_note,
+            other_book=connection[
+                "source_book"
+            ],
+            similarity=score,
+        )
 
-    for note_name, related in connection_map.items():
+        note_connections.setdefault(
+            source_note,
+            [],
+        ).append(source_line)
+
+        note_connections.setdefault(
+            target_note,
+            [],
+        ).append(target_line)
+
+    updated = 0
+
+    for note_name, lines in note_connections.items():
+
         note_path = (
-            passages_folder
+            VAULT_PASSAGES_DIR
             / f"{note_name}.md"
         )
 
-        if not note_path.exists():
-            missing.append(note_name)
-            continue
-
-        note_text = note_path.read_text(
-            encoding="utf-8"
+        unique_lines = list(
+            dict.fromkeys(lines)
         )
 
-        connections_markdown = format_connections(
-            related
+        replace_connections_section(
+            note_path,
+            unique_lines,
         )
 
-        updated_text = replace_connections_section(
-            note_text,
-            connections_markdown,
-        )
+        if note_path.exists():
+            updated += 1
 
-        note_path.write_text(
-            updated_text,
-            encoding="utf-8"
-        )
-
-        updated += 1
-
-        print(
-            f"Updated connections: {note_path.name}"
-        )
-
-    print("\n" + "=" * 60)
-    print("CONNECTION EXPORT COMPLETE")
+    print()
     print(
-        f"Original connections: {len(connections)}"
+        f"Passage notes with semantic "
+        f"connections: {updated}"
     )
-    print(
-        f"After reciprocal deduplication: "
-        f"{len(deduplicated)}"
-    )
-    print(
-        f"Passage notes updated: {updated}"
-    )
-    print(
-        f"Missing passage notes: {len(missing)}"
-    )
-
-    if missing:
-        print("\nMISSING NOTES")
-        print("=" * 60)
-
-        for note_name in missing:
-            print(note_name)
 
 
 if __name__ == "__main__":
-    export_connections_to_obsidian(
-        minimum_similarity=0.60
-    )
+    export_connections_to_obsidian()
