@@ -1,29 +1,12 @@
+import csv
 from pathlib import Path
+
 from docx import Document
 
-
-BOOK_HEADINGS = {
-    "hayek's bastards": {
-        "book_id": "B004",
-        "title": "Hayek's Bastards",
-        "author": "Quinn Slobodian",
-    },
-    "rise & fall of the neoliberal order": {
-        "book_id": "B005",
-        "title": "The Rise and Fall of the Neoliberal Order",
-        "author": "Gary Gerstle",
-    },
-    "the rise and fall of the neoliberal order": {
-        "book_id": "B005",
-        "title": "The Rise and Fall of the Neoliberal Order",
-        "author": "Gary Gerstle",
-    },
-    "the strange death of europe": {
-        "book_id": "B006",
-        "title": "The Strange Death of Europe",
-        "author": "Douglas Murray",
-    },
-}
+from src.settings import (
+    BOOKS_CSV,
+    DEFAULT_TYPED_NOTES_FILE,
+)
 
 
 SECTION_HEADINGS = {
@@ -40,14 +23,21 @@ SECTION_HEADINGS = {
 def normalize_heading(text: str) -> str:
     """
     Normalize book and section headings.
+
+    Examples:
+        # Hayek's Bastards
+        ## QUOTE
     """
 
     text = text.strip()
 
+    # Remove Markdown-style heading markers.
     text = text.lstrip("#").strip()
 
+    # Normalize curly apostrophes.
     text = text.replace("’", "'")
 
+    # Normalize capitalization and whitespace.
     return " ".join(
         text.casefold().split()
     )
@@ -55,19 +45,94 @@ def normalize_heading(text: str) -> str:
 
 def clean_text(text: str) -> str:
     """
-    Clean whitespace and repair common line-wrap artifacts.
+    Normalize whitespace without altering legitimate
+    punctuation or hyphenation.
     """
 
-    text = " ".join(text.split())
+    return " ".join(
+        text.split()
+    ).strip()
 
-    # Repair split words caused by PDF/book copy formatting.
-    text = text.replace("- ", "")
 
-    return text.strip()
+def load_typed_book_catalogue(
+    books_path: Path = BOOKS_CSV,
+) -> dict[str, dict]:
+    """
+    Load books.csv and create a title-based lookup for
+    books that may appear in typed reading notes.
+    """
+
+    if not books_path.exists():
+        raise FileNotFoundError(
+            f"Could not find books catalogue: "
+            f"{books_path}"
+        )
+
+    catalogue = {}
+
+    with books_path.open(
+        "r",
+        encoding="utf-8-sig",
+        newline="",
+    ) as file:
+        reader = csv.DictReader(file)
+
+        required_columns = {
+            "book_id",
+            "title",
+            "author",
+        }
+
+        if reader.fieldnames is None:
+            raise ValueError(
+                "books.csv has no header row."
+            )
+
+        missing = (
+            required_columns
+            - set(reader.fieldnames)
+        )
+
+        if missing:
+            raise ValueError(
+                "books.csv is missing columns: "
+                + ", ".join(sorted(missing))
+            )
+
+        for row in reader:
+            book_id = (
+                row.get("book_id", "")
+                .strip()
+            )
+
+            title = (
+                row.get("title", "")
+                .strip()
+            )
+
+            author = (
+                row.get("author", "")
+                .strip()
+            )
+
+            if not book_id or not title:
+                continue
+
+            normalized_title = (
+                normalize_heading(title)
+            )
+
+            catalogue[normalized_title] = {
+                "book_id": book_id,
+                "title": title,
+                "author": author,
+            }
+
+    return catalogue
 
 
 def read_docx_paragraphs(
-    docx_path: str,
+    docx_path: str | Path,
 ) -> list[str]:
     """
     Read all non-empty paragraphs from a DOCX file.
@@ -82,65 +147,65 @@ def read_docx_paragraphs(
 
     document = Document(path)
 
-    paragraphs = []
-
-    for paragraph in document.paragraphs:
-        text = paragraph.text.strip()
-
-        if text:
-            paragraphs.append(text)
-
-    return paragraphs
+    return [
+        paragraph.text.strip()
+        for paragraph in document.paragraphs
+        if paragraph.text.strip()
+    ]
 
 
 def detect_book_heading(
     text: str,
+    book_catalogue: dict[str, dict],
 ) -> dict | None:
     """
-    Return book metadata if the paragraph is a book heading.
+    Return book metadata if the paragraph matches
+    a title in books.csv.
     """
 
     normalized = normalize_heading(text)
 
-    return BOOK_HEADINGS.get(normalized)
+    return book_catalogue.get(
+        normalized
+    )
 
 
 def detect_section_heading(
     text: str,
 ) -> str | None:
     """
-    Return normalized content type if paragraph is
-    a recognized section heading.
+    Identify explicit typed-note section labels.
     """
 
     normalized = normalize_heading(text)
 
-    return SECTION_HEADINGS.get(normalized)
+    return SECTION_HEADINGS.get(
+        normalized
+    )
 
 
 def parse_stance(
     text: str,
 ) -> str | None:
     """
-    Detect optional stance metadata inside external commentary.
+    Parse optional metadata such as:
+
+        Stance: critical
     """
 
     cleaned = clean_text(text)
 
-    if not cleaned.casefold().startswith("stance:"):
+    if not cleaned.casefold().startswith(
+        "stance:"
+    ):
         return None
 
-    _, value = cleaned.split(":", 1)
+    _, value = cleaned.split(
+        ":",
+        1,
+    )
 
     value = value.strip().casefold()
-
-    if value in {
-        "supportive",
-        "critical",
-        "mixed",
-        "neutral",
-    }:
-        return value
 
     return value or None
 
@@ -152,11 +217,9 @@ def build_record(
     record_number: int,
 ) -> dict | None:
     """
-    Convert a section into one structured record.
+    Convert one explicitly marked section into
+    a structured reading record.
     """
-
-    if not paragraphs:
-        return None
 
     cleaned_paragraphs = [
         clean_text(paragraph)
@@ -169,30 +232,45 @@ def build_record(
 
     stance = None
 
-    if content_type == "external_commentary":
-        first_stance = parse_stance(
+    if (
+        content_type
+        == "external_commentary"
+    ):
+        possible_stance = parse_stance(
             cleaned_paragraphs[0]
         )
 
-        if first_stance:
-            stance = first_stance
-            cleaned_paragraphs = cleaned_paragraphs[1:]
+        if possible_stance:
+            stance = possible_stance
+            cleaned_paragraphs = (
+                cleaned_paragraphs[1:]
+            )
 
     if not cleaned_paragraphs:
         return None
 
-    if content_type == "entities_and_keywords":
-        text = "\n".join(cleaned_paragraphs)
+    if (
+        content_type
+        == "entities_and_keywords"
+    ):
+        text = "\n".join(
+            cleaned_paragraphs
+        )
+
     else:
-        text = "\n\n".join(cleaned_paragraphs)
+        text = "\n\n".join(
+            cleaned_paragraphs
+        )
 
     provenance_map = {
         "book_quote": "book",
         "my_analysis": "my_analysis",
         "my_note": "my_note",
-        "external_commentary": "external_commentary",
-        "key_takeaways": "unknown",
-        "entities_and_keywords": "unknown",
+        "external_commentary":
+            "external_commentary",
+        "key_takeaways": "my_analysis",
+        "entities_and_keywords":
+            "unknown",
     }
 
     record_id = (
@@ -202,14 +280,18 @@ def build_record(
 
     return {
         "record_id": record_id,
+        "source_kind": "typed_document",
+        "source_type": "typed_document",
         "book_id": book["book_id"],
         "book_title": book["title"],
         "author": book["author"],
-        "source_type": "typed_document",
+        "chapter": "",
         "content_type": content_type,
-        "provenance": provenance_map.get(
-            content_type,
-            "unknown",
+        "provenance": (
+            provenance_map.get(
+                content_type,
+                "unknown",
+            )
         ),
         "stance": stance,
         "text": text,
@@ -217,11 +299,30 @@ def build_record(
 
 
 def parse_typed_document(
-    docx_path: str = "typed_notes/quote_analysis.docx",
+    docx_path: str | Path = (
+        DEFAULT_TYPED_NOTES_FILE
+    ),
 ) -> list[dict]:
     """
-    Parse the structured DOCX into typed reading records.
+    Parse a structured typed-notes DOCX.
+
+    Expected structure:
+
+        # Book Title
+
+        ## QUOTE
+        ...
+
+        ## MY ANALYSIS
+        ...
+
+        ## EXTERNAL COMMENTARY
+        ...
     """
+
+    book_catalogue = (
+        load_typed_book_catalogue()
+    )
 
     paragraphs = read_docx_paragraphs(
         docx_path
@@ -246,27 +347,41 @@ def parse_typed_document(
             current_content = []
             return
 
-        book_id = current_book["book_id"]
+        book_id = current_book[
+            "book_id"
+        ]
 
-        book_record_counts[book_id] = (
-            book_record_counts.get(book_id, 0) + 1
+        next_number = (
+            book_record_counts.get(
+                book_id,
+                0,
+            )
+            + 1
         )
 
         record = build_record(
             current_book,
             current_content_type,
             current_content,
-            book_record_counts[book_id],
+            next_number,
         )
 
         if record:
             records.append(record)
 
+            book_record_counts[
+                book_id
+            ] = next_number
+
         current_content = []
 
     for paragraph in paragraphs:
-        book_match = detect_book_heading(
-            paragraph
+
+        book_match = (
+            detect_book_heading(
+                paragraph,
+                book_catalogue,
+            )
         )
 
         if book_match:
@@ -278,23 +393,31 @@ def parse_typed_document(
 
             continue
 
-        section_match = detect_section_heading(
-            paragraph
+        section_match = (
+            detect_section_heading(
+                paragraph
+            )
         )
 
         if section_match:
             flush_current_record()
 
-            current_content_type = section_match
+            current_content_type = (
+                section_match
+            )
+
             current_content = []
 
             continue
 
         if (
             current_book is not None
-            and current_content_type is not None
+            and current_content_type
+            is not None
         ):
-            current_content.append(paragraph)
+            current_content.append(
+                paragraph
+            )
 
     flush_current_record()
 
@@ -305,7 +428,7 @@ def summarize_records(
     records: list[dict],
 ) -> None:
     """
-    Print record counts by book and content type.
+    Print record counts by book and type.
     """
 
     print()
@@ -321,11 +444,16 @@ def summarize_records(
             record["content_type"],
         )
 
-        counts[key] = counts.get(key, 0) + 1
+        counts[key] = (
+            counts.get(key, 0) + 1
+        )
 
-    for key, count in sorted(counts.items()):
-        book_id, content_type = key
-
+    for (
+        book_id,
+        content_type,
+    ), count in sorted(
+        counts.items()
+    ):
         print(
             f"{book_id} | "
             f"{content_type} | "
@@ -343,30 +471,3 @@ if __name__ == "__main__":
     records = parse_typed_document()
 
     summarize_records(records)
-
-    print()
-    print("=" * 70)
-    print("PREVIEW")
-    print("=" * 70)
-
-    for record in records[:10]:
-        print()
-        print(
-            f"{record['record_id']} | "
-            f"{record['book_title']} | "
-            f"{record['content_type']}"
-        )
-
-        if record["stance"]:
-            print(
-                f"Stance: {record['stance']}"
-            )
-
-        print()
-
-        preview = record["text"][:500]
-
-        print(preview)
-
-        if len(record["text"]) > 500:
-            print("...")
